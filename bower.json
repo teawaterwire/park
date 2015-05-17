@@ -1,0 +1,8 @@
+{
+  "name": "park",
+  "version": "0.0.0",
+  "dependencies": {
+    "fetch": "~0.8.1",
+    "velocity": "~1.2.2"
+  }
+}
