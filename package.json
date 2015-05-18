@@ -4,6 +4,7 @@
   "description": "",
   "main": "app/index.html",
   "scripts": {
+    "start": "gulp",
     "test": "standard app/components/*.js"
   },
   "author": "TV",
