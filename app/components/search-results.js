@@ -2,11 +2,13 @@
 var React = require('react')
 var Immutable = require('immutable')
 
-// React components
+// React component used in this component
 var Details = require('./details.js')
 
-// Styling with Javascript (you'll like it eventually!)
+// Inline styling (you'll like it eventually!)
 var s = getStyle()
+
+// Setting mobile breakpoint at 480px
 var BREAKPOINT = 480
 
 var SearchResults = React.createClass({
@@ -25,15 +27,13 @@ var SearchResults = React.createClass({
     fetch('listing.json')
       .then(res => res.json())
       .then(listing => {
-        var Ilisting = Immutable.fromJS(listing)
-        var parkings = Ilisting.get('data')
-        this.renderMap(Ilisting.get('coords').map(v => parseFloat(v)))
+        var IListing = Immutable.fromJS(listing)
+        var parkings = IListing.get('data')
+        this.renderMap(IListing.get('coords').map(v => parseFloat(v)))
         this.renderMarkers(parkings)
-        this.setState({ // eslint-disable-line
-          parkings: parkings
-        })
+        this.setState({parkings: parkings}) // eslint-disable-line
       })
-    // Making it properly responsive
+    // Making it responsive
     window.addEventListener('resize', this.handleResize)
   },
   componentWillUnmount () {
@@ -59,25 +59,31 @@ var SearchResults = React.createClass({
       google.maps.event.addListener(marker, 'click', () => {
         var selected = this.state.selected
         if (this.state.isMobile) {
+          // Scrolling down to the details pane on mobile screens
           let mobilePane = React.findDOMNode(this.refs.mobilePane)
           Velocity(mobilePane, 'scroll')
         } else {
+          // Desktop or tablet screens
           let pane = React.findDOMNode(this.refs.pane)
           let mapCanvas = React.findDOMNode(this.refs.mapCanvas)
           if (selected === i) {
+            // Hiding the pane if clicking on already active marker
             Velocity({e: pane, p: {translateZ: 0, translateX: 0}})
             Velocity({e: mapCanvas, p: {width: '100%'}})
           } else {
             if (selected === -1) {
+              // Sliding in the pane no marker previously active
               Velocity({e: pane, p: {translateZ: 0, translateX: '-100%'}})
               Velocity({e: mapCanvas, p: {width: '70%'}})
             } else {
+              // Shaking the pane if a different marker was already active
               Velocity(pane, 'callout.bounce')
             }
           }
         }
+        // Finally setting the selected state to reflect the active marker
         this.setState({selected: selected === i ? -1 : i})
-        // Drawing directions
+        // Drawing directions on map
         this.directionsService.route({
           origin: marker.getPosition(),
           destination: new google.maps.LatLng(51.55585300, -0.27959400),
